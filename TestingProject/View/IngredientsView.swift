@@ -6,10 +6,31 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct IngredientsView: View {
+    
+    @Environment(\.modelContext) var modelContext
+    @Query var ingredients: [RecipeIngredient]
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List {
+            ForEach(ingredients) { ingredient in
+                Text(ingredient.name)
+            }
+        }
+        .toolbar {
+            ToolbarItem {
+                Button(action: addItem) {
+                    Label("Add", systemImage: "plus")
+                }
+            }
+        }
+        .navigationTitle("Ingredients")
+    }
+    
+    private func addItem() {
+        print("add")
     }
 }
 
