@@ -11,11 +11,11 @@ import SwiftData
 @Model
 final class FoodRecipe {
     
-    var id: UUID
     var name: String
+    @Relationship var ingredients: [RecipeIngredient]
     
-    init(id: UUID, name: String) {
-        self.id = id
+    init(name: String, ingredients: [RecipeIngredient]) {
         self.name = name
+        self.ingredients = ingredients
     }
 }
