@@ -13,6 +13,8 @@ struct TestingProjectApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
+            RecipeIngredient.self,
+            FoodRecipe.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -26,6 +28,7 @@ struct TestingProjectApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
+//            ContentView()
         }
         .modelContainer(sharedModelContainer)
     }

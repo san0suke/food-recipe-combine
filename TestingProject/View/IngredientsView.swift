@@ -10,8 +10,11 @@ import SwiftData
 
 struct IngredientsView: View {
     
-    @Environment(\.modelContext) var modelContext
-    @Query var ingredients: [RecipeIngredient]
+    @Environment(\.modelContext) private var modelContext
+    @Query private var ingredients: [RecipeIngredient]
+    
+    @State private var showFormAlert: Bool = false
+    @State private var ingredientName: String = ""
     
     var body: some View {
         List {
@@ -27,13 +30,33 @@ struct IngredientsView: View {
             }
         }
         .navigationTitle("Ingredients")
+        .sheet(isPresented: $showFormAlert) {
+            AddIngredientsSheet(isPresented: $showFormAlert, name: $ingredientName) {
+                saveIngredient()
+            }
+        }
     }
     
     private func addItem() {
-        print("add")
+        showFormAlert.toggle()
+    }
+    
+    private func saveIngredient() {
+        withAnimation {
+            let ingredient = RecipeIngredient(name: ingredientName)
+            modelContext.insert(ingredient)
+            
+            do {
+                try modelContext.save()
+                ingredientName = ""
+            } catch {
+                print("Error on saving: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
 #Preview {
     IngredientsView()
+        .modelContainer(for: RecipeIngredient.self, inMemory: true)
 }
