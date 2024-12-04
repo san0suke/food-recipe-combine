@@ -11,15 +11,27 @@ import SwiftData
 struct IngredientsView: View {
     
     @Environment(\.modelContext) private var modelContext
-    @Query private var ingredients: [RecipeIngredient]
+    @Query(sort: \RecipeIngredient.name, order: .forward) private var ingredients: [RecipeIngredient]
     
     @State private var showFormAlert: Bool = false
     @State private var ingredientName: String = ""
+    @State private var selectedIngredient: RecipeIngredient?
     
     var body: some View {
         List {
             ForEach(ingredients) { ingredient in
-                Text(ingredient.name)
+                Button(action: {
+                    selectedIngredient = ingredient
+                    ingredientName = ingredient.name
+                    showFormAlert = true
+                }) {
+                    HStack {
+                        Text(ingredient.name)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(PlainButtonStyle())
             }
             .onDelete(perform: deleteIngredients)
         }
@@ -32,7 +44,9 @@ struct IngredientsView: View {
         }
         .navigationTitle("Ingredients")
         .sheet(isPresented: $showFormAlert) {
-            AddIngredientsSheet(isPresented: $showFormAlert, name: $ingredientName) {
+            FormIngredientsSheet(isPresented: $showFormAlert,
+                                 name: $ingredientName,
+                                 selectedIngredient: $selectedIngredient) {
                 saveIngredient()
             }
         }
@@ -44,12 +58,18 @@ struct IngredientsView: View {
     
     private func saveIngredient() {
         withAnimation {
-            let ingredient = RecipeIngredient(name: ingredientName)
-            modelContext.insert(ingredient)
+            if let selectedIngredient = selectedIngredient {
+                selectedIngredient.name = ingredientName
+                modelContext.insert(selectedIngredient)
+            } else {
+                let ingredient = RecipeIngredient(name: ingredientName)
+                modelContext.insert(ingredient)
+            }
             
             do {
                 try modelContext.save()
                 ingredientName = ""
+                selectedIngredient = nil
             } catch {
                 print("Error on saving: \(error.localizedDescription)")
             }

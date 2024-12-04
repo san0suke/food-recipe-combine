@@ -7,15 +7,16 @@
 
 import SwiftUI
 
-struct AddIngredientsSheet: View {
+struct FormIngredientsSheet: View {
     
     @Binding var isPresented: Bool
     @Binding var name: String
+    @Binding var selectedIngredient: RecipeIngredient?
     var onSave: () -> Void
     
     var body: some View {
         VStack {
-            Text("Add Ingredients")
+            Text(selectedIngredient == nil ? "Add Ingredients" : "Edit Ingredients")
                 .font(.title)
                 .padding()
             TextField("Name", text: $name)
@@ -55,6 +56,7 @@ struct AddIngredientsSheet: View {
 }
 
 #Preview {
-    AddIngredientsSheet(isPresented: .constant(false),
-                        name: .constant("")) {}
+    FormIngredientsSheet(isPresented: .constant(false),
+                        name: .constant(""),
+                         selectedIngredient: .constant(RecipeIngredient(name: "Bacon"))) {}
 }
