@@ -21,6 +21,7 @@ struct IngredientsView: View {
             ForEach(ingredients) { ingredient in
                 Text(ingredient.name)
             }
+            .onDelete(perform: deleteIngredients)
         }
         .toolbar {
             ToolbarItem {
@@ -53,6 +54,21 @@ struct IngredientsView: View {
                 print("Error on saving: \(error.localizedDescription)")
             }
         }
+    }
+    
+    private func deleteIngredients(indexSet: IndexSet) {
+        withAnimation {
+            for index in indexSet {
+                modelContext.delete(ingredients[index])
+            }
+            
+            do {
+                try modelContext.save()
+            } catch {
+                print("Error on deleting: \(error.localizedDescription)")
+            }
+        }
+
     }
 }
 
