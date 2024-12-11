@@ -12,7 +12,6 @@ import SwiftData
 struct TestingProjectApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
             RecipeIngredient.self,
             FoodRecipe.self,
         ])
@@ -28,7 +27,6 @@ struct TestingProjectApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
-//            ContentView()
         }
         .modelContainer(sharedModelContainer)
     }
