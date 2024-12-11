@@ -10,20 +10,20 @@ import SwiftData
 
 struct IngredientsView: View {
     
-    @Environment(\.modelContext) private var modelContext
-    @Query(sort: \RecipeIngredient.name, order: .forward) private var ingredients: [RecipeIngredient]
+    @State private var viewModel: IngredientsViewModel
     
-    @State private var showFormAlert: Bool = false
-    @State private var ingredientName: String = ""
-    @State private var selectedIngredient: RecipeIngredient?
+    init(modelContext: ModelContext) {
+        let viewModel = IngredientsViewModel(modelContext: modelContext)
+        _viewModel = State(initialValue: viewModel)
+    }
     
     var body: some View {
         List {
-            ForEach(ingredients) { ingredient in
+            ForEach(viewModel.ingredients) { ingredient in
                 Button(action: {
-                    selectedIngredient = ingredient
-                    ingredientName = ingredient.name
-                    showFormAlert = true
+                    viewModel.selectedIngredient = ingredient
+                    viewModel.ingredientName = ingredient.name
+                    viewModel.showFormAlert = true
                 }) {
                     HStack {
                         Text(ingredient.name)
@@ -33,66 +33,27 @@ struct IngredientsView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
             }
-            .onDelete(perform: deleteIngredients)
+            .onDelete(perform: viewModel.deleteIngredients)
         }
         .toolbar {
             ToolbarItem {
-                Button(action: addItem) {
+                Button(action: viewModel.addItem) {
                     Label("Add", systemImage: "plus")
                 }
             }
         }
         .navigationTitle("Ingredients")
-        .sheet(isPresented: $showFormAlert) {
-            FormIngredientsSheet(isPresented: $showFormAlert,
-                                 name: $ingredientName,
-                                 selectedIngredient: $selectedIngredient) {
-                saveIngredient()
+        .sheet(isPresented: $viewModel.showFormAlert) {
+            FormIngredientsSheet(isPresented: $viewModel.showFormAlert,
+                                 name: $viewModel.ingredientName,
+                                 selectedIngredient: $viewModel.selectedIngredient) {
+                viewModel.saveIngredient()
             }
         }
-    }
-    
-    private func addItem() {
-        showFormAlert.toggle()
-    }
-    
-    private func saveIngredient() {
-        withAnimation {
-            if let selectedIngredient = selectedIngredient {
-                selectedIngredient.name = ingredientName
-                modelContext.insert(selectedIngredient)
-            } else {
-                let ingredient = RecipeIngredient(name: ingredientName)
-                modelContext.insert(ingredient)
-            }
-            
-            do {
-                try modelContext.save()
-                ingredientName = ""
-                selectedIngredient = nil
-            } catch {
-                print("Error on saving: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    private func deleteIngredients(indexSet: IndexSet) {
-        withAnimation {
-            for index in indexSet {
-                modelContext.delete(ingredients[index])
-            }
-            
-            do {
-                try modelContext.save()
-            } catch {
-                print("Error on deleting: \(error.localizedDescription)")
-            }
-        }
-
     }
 }
 
-#Preview {
-    IngredientsView()
-        .modelContainer(for: RecipeIngredient.self, inMemory: true)
-}
+//#Preview {
+//    IngredientsView(modelContext: )
+//        .modelContainer(for: RecipeIngredient.self, inMemory: true)
+//}

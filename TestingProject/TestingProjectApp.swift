@@ -10,6 +10,7 @@ import SwiftData
 
 @main
 struct TestingProjectApp: App {
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             RecipeIngredient.self,
