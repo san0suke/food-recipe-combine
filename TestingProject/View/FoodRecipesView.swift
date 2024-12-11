@@ -16,7 +16,9 @@ struct FoodRecipesView: View {
     var body: some View {
         VStack {
             List(foodRecipes) { recipe in
-                Text(recipe.name)
+                NavigationLink(destination: FormRecipeView(recipe: recipe)) {
+                    Text(recipe.name)
+                }
             }
         }
         .navigationTitle("Food Recipes")

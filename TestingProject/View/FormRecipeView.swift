@@ -17,6 +17,8 @@ struct FormRecipeView: View {
     @State private var selectedIngredients: [RecipeIngredient] = []
     @State private var showAddIngredientsSheet: Bool = false
     
+    var recipe: FoodRecipe?
+    
     var body: some View {
         NavigationView {
             Form {
@@ -69,21 +71,31 @@ struct FormRecipeView: View {
                     .disabled(name.isEmpty || selectedIngredients.isEmpty)
                 }
             }
+            .onAppear {
+                if let recipe = recipe {
+                    name = recipe.name
+                    selectedIngredients = Array(recipe.ingredients)
+                }
+            }
         }
     }
     
     private func saveRecipe() {
-        let recipe = FoodRecipe(name: name, ingredients: selectedIngredients)
         
-        modelContext.insert(recipe)
+        if let recipe = recipe {
+            recipe.name = name
+            recipe.ingredients = selectedIngredients
+        } else {
+            let newRecipe = FoodRecipe(name: name, ingredients: selectedIngredients)
+            modelContext.insert(newRecipe)
+        }
         
         do {
             try modelContext.save()
+            dismiss()
         } catch {
-            print("Error saving")
+            print("Error saving: \(error)")
         }
-        
-        dismiss()
     }
     
     private func removeIngredient(_ ingredient: RecipeIngredient) {
