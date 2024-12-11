@@ -77,6 +77,12 @@ struct FormRecipeView: View {
         
         modelContext.insert(recipe)
         
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error saving")
+        }
+        
         dismiss()
     }
     

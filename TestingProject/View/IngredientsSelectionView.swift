@@ -13,6 +13,8 @@ struct IngredientsSelectionView: View {
     @Binding var selectedIngredients: [RecipeIngredient]
     @Environment(\.dismiss) private var dismiss
     
+    @State private var initialIngredients: [RecipeIngredient] = []
+    
     var body: some View {
         NavigationView {
             List(ingredients) { ingredient in
@@ -29,10 +31,14 @@ struct IngredientsSelectionView: View {
                     }
                 }
             }
+            .onAppear {
+                initialIngredients = selectedIngredients
+            }
             .navigationTitle("Select Ingredients")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
+                        selectedIngredients = initialIngredients
                         dismiss()
                     }
                 }
@@ -46,7 +52,9 @@ struct IngredientsSelectionView: View {
     }
     
     private func addIngredient(_ ingredient: RecipeIngredient) {
-        if !selectedIngredients.contains(where: { $0.id == ingredient.id }) {
+        if let index = selectedIngredients.firstIndex(where: { $0.id == ingredient.id }) {
+            selectedIngredients.remove(at: index)
+        } else {
             selectedIngredients.append(ingredient)
         }
     }

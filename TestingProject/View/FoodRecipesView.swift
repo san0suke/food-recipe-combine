@@ -16,7 +16,7 @@ struct FoodRecipesView: View {
     var body: some View {
         VStack {
             List(foodRecipes) { recipe in
-                Text("Hello, World!")
+                Text(recipe.name)
             }
         }
         .navigationTitle("Food Recipes")
