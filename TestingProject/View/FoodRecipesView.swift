@@ -10,12 +10,16 @@ import SwiftData
 
 struct FoodRecipesView: View {
     
-    @Environment(\.modelContext) private var modelContext
-    @Query(sort: \FoodRecipe.name, order: .forward) private var foodRecipes: [FoodRecipe]
+    @State private var viewModel: FoodRecipesViewModel
+    
+    init(modelContext: ModelContext) {
+        let viewModel = FoodRecipesViewModel(modelContext: modelContext)
+        _viewModel = State(wrappedValue: viewModel)
+    }
     
     var body: some View {
         VStack {
-            List(foodRecipes) { recipe in
+            List(viewModel.foodRecipes) { recipe in
                 NavigationLink(destination: FormRecipeView(recipe: recipe)) {
                     Text(recipe.name)
                 }
@@ -33,5 +37,5 @@ struct FoodRecipesView: View {
 }
 
 #Preview {
-    FoodRecipesView()
+    FoodRecipesView(modelContext: PreviewModelContainer.instance.modelContext)
 }

@@ -17,7 +17,7 @@ struct MainView: View {
                 NavigationLink(destination: IngredientsView(modelContext: modelContext)) {
                     MenuButton(title: "Ingredients", icon: "leaf")
                 }
-                NavigationLink(destination: FoodRecipesView()) {
+                NavigationLink(destination: FoodRecipesView(modelContext: modelContext)) {
                     MenuButton(title: "Food Recipes", icon: "book")
                 }
             }
