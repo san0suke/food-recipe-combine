@@ -10,12 +10,8 @@ import SwiftData
 
 struct IngredientsView: View {
     
-    @StateObject private var viewModel: IngredientsViewModel
-    
-    init(modelContext: ModelContext) {
-        let viewModel = IngredientsViewModel(modelContext: modelContext)
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @Environment(\.modelContext) var modelContext
+    @StateObject private var viewModel = IngredientsViewModel()
     
     var body: some View {
         List {
@@ -44,9 +40,13 @@ struct IngredientsView: View {
                 viewModel.saveIngredient()
             }
         }
+        .onAppear {
+            viewModel.initialize(modelContext: modelContext)
+        }
     }
 }
 
 #Preview {
-    IngredientsView(modelContext: PreviewModelContainer.instance.modelContext)
+    IngredientsView()
+        .modelContext(PreviewModelContainer.instance.modelContext)
 }

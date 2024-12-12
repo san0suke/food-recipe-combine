@@ -11,20 +11,22 @@ import SwiftUI
 
 class IngredientsViewModel: ObservableObject {
     
-    private var modelContext: ModelContext
+    private var modelContext: ModelContext?
     
     @Published var ingredientName: String = ""
     @Published var selectedIngredient: RecipeIngredient?
     @Published var showFormAlert: Bool = false
     
-    private(set) var ingredients: [RecipeIngredient] = []
+    @Published private(set) var ingredients: [RecipeIngredient] = []
     
-    init(modelContext: ModelContext) {
+    func initialize(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchIngredients()
     }
     
     func fetchIngredients() {
+        guard let modelContext = modelContext else { return }
+                
         let fetchDescriptor = FetchDescriptor<RecipeIngredient>(
             sortBy: [SortDescriptor(\.name)]
         )
@@ -44,6 +46,8 @@ class IngredientsViewModel: ObservableObject {
     }
     
     func saveIngredient() {
+        guard let modelContext = modelContext else { return }
+        
         withAnimation {
             if let selectedIngredient = selectedIngredient {
                 selectedIngredient.name = ingredientName
@@ -63,6 +67,8 @@ class IngredientsViewModel: ObservableObject {
     }
     
     func deleteIngredients(at indexSet: IndexSet) {
+        guard let modelContext = modelContext else { return }
+        
         withAnimation {
             for index in indexSet {
                 modelContext.delete(ingredients[index])

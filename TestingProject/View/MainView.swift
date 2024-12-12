@@ -14,7 +14,7 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             VStack {
-                NavigationLink(destination: IngredientsView(modelContext: modelContext)) {
+                NavigationLink(destination: IngredientsView()) {
                     MenuButton(title: "Ingredients", icon: "leaf")
                 }
                 NavigationLink(destination: FoodRecipesView(modelContext: modelContext)) {
