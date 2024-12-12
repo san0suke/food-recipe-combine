@@ -14,15 +14,23 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             VStack {
+                Text("Food App")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Spacer()
+                
                 NavigationLink(destination: IngredientsView()) {
                     MenuButton(title: "Ingredients", icon: "leaf")
                 }
                 NavigationLink(destination: FoodRecipesView()) {
                     MenuButton(title: "Food Recipes", icon: "book")
                 }
+                Spacer()
             }
             .padding()
-            .navigationTitle("Food App")
+            .navigationBarHidden(true)
         }
     }
 }

@@ -18,7 +18,6 @@ struct FormRecipeView: View {
     var recipe: FoodRecipe?
     
     var body: some View {
-        NavigationView {
             Form {
                 Section(header: Text("Recipe Name")) {
                     TextField("Enter Recipe Name", text: $viewModel.name)
@@ -58,11 +57,6 @@ struct FormRecipeView: View {
             }
             .navigationTitle("New Recipe")
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         viewModel.saveRecipe()
@@ -75,7 +69,6 @@ struct FormRecipeView: View {
                                      dismiss: dismiss,
                                      recipe: recipe)
             }
-        }
     }
 }
 
