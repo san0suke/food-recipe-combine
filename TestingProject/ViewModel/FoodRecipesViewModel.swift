@@ -17,7 +17,6 @@ class FoodRecipesViewModel {
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        fetchFoodRecipes()
     }
     
     func fetchFoodRecipes() {

@@ -33,6 +33,9 @@ struct FoodRecipesView: View {
                 }
             }
         }
+        .onAppear {
+            viewModel.fetchFoodRecipes()
+        }
     }
 }
 
