@@ -10,9 +10,9 @@ import SwiftData
 import SwiftUI
 
 @Observable
-class IngredientsViewModel: ObservableObject {
+class IngredientsViewModel {
     
-    private var modelContext: ModelContext?
+    private var modelContext: ModelContext
     
     var ingredientName: String = ""
     var selectedIngredient: RecipeIngredient?
@@ -26,7 +26,6 @@ class IngredientsViewModel: ObservableObject {
     }
     
     func fetchIngredients() {
-        guard let modelContext else { return }
         let fetchDescriptor = FetchDescriptor<RecipeIngredient>(
             sortBy: [SortDescriptor(\.name)]
         )
@@ -51,11 +50,11 @@ class IngredientsViewModel: ObservableObject {
                 selectedIngredient.name = ingredientName
             } else {
                 let ingredient = RecipeIngredient(name: ingredientName)
-                modelContext?.insert(ingredient)
+                modelContext.insert(ingredient)
             }
             
             do {
-                try modelContext?.save()
+                try modelContext.save()
                 resetForm()
                 fetchIngredients()
             } catch {
@@ -67,11 +66,11 @@ class IngredientsViewModel: ObservableObject {
     func deleteIngredients(at indexSet: IndexSet) {
         withAnimation {
             for index in indexSet {
-                modelContext?.delete(ingredients[index])
+                modelContext.delete(ingredients[index])
             }
             
             do {
-                try modelContext?.save()
+                try modelContext.save()
                 fetchIngredients()
             } catch {
                 print("Error on deleting: \(error.localizedDescription)")
