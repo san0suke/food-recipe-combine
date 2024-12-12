@@ -12,10 +12,8 @@ struct FormRecipeView: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \RecipeIngredient.name, order: .forward) private var ingredients: [RecipeIngredient]
-    @State private var name: String = ""
-    @State private var selectedIngredients: [RecipeIngredient] = []
-    @State private var showAddIngredientsSheet: Bool = false
+    
+    @StateObject private var viewModel = FormRecipeViewModel()
     
     var recipe: FoodRecipe?
     
@@ -23,22 +21,22 @@ struct FormRecipeView: View {
         NavigationView {
             Form {
                 Section(header: Text("Recipe Name")) {
-                    TextField("Enter Recipe Name", text: $name)
+                    TextField("Enter Recipe Name", text: $viewModel.name)
                         .textFieldStyle(.roundedBorder)
                         .padding()
                 }
                 
                 Section(header: Text("Ingredients")) {
-                    if selectedIngredients.isEmpty {
+                    if viewModel.selectedIngredients.isEmpty {
                         Text("No Ingredients selected.")
                             .foregroundColor(.gray)
                     } else {
-                        ForEach(selectedIngredients) { ingredient in
+                        ForEach(viewModel.selectedIngredients) { ingredient in
                             HStack {
                                 Text(ingredient.name)
                                 Spacer()
                                 Button(action: {
-                                    removeIngredient(ingredient)
+                                    viewModel.removeIngredient(ingredient)
                                 }) {
                                     Image(systemName: "minus.circle")
                                         .foregroundColor(.red)
@@ -48,14 +46,15 @@ struct FormRecipeView: View {
                     }
                     
                     Button(action: {
-                        showAddIngredientsSheet.toggle()
+                        viewModel.showAddIngredientsSheet.toggle()
                     }) {
                         Label("Add Ingredient", systemImage: "plus.circle")
                     }
                 }
             }
-            .sheet(isPresented: $showAddIngredientsSheet) {
-                IngredientsSelectionView(ingredients: ingredients, selectedIngredients: $selectedIngredients)
+            .sheet(isPresented: $viewModel.showAddIngredientsSheet) {
+                IngredientsSelectionView(ingredients: viewModel.ingredients,
+                                         selectedIngredients: $viewModel.selectedIngredients)
             }
             .navigationTitle("New Recipe")
             .toolbar {
@@ -66,40 +65,17 @@ struct FormRecipeView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        saveRecipe()
+                        viewModel.saveRecipe()
                     }
-                    .disabled(name.isEmpty || selectedIngredients.isEmpty)
+                    .disabled(viewModel.name.isEmpty || viewModel.selectedIngredients.isEmpty)
                 }
             }
             .onAppear {
-                if let recipe = recipe {
-                    name = recipe.name
-                    selectedIngredients = Array(recipe.ingredients)
-                }
+                viewModel.initialize(modelContext: modelContext,
+                                     dismiss: dismiss,
+                                     recipe: recipe)
             }
         }
-    }
-    
-    private func saveRecipe() {
-        
-        if let recipe = recipe {
-            recipe.name = name
-            recipe.ingredients = selectedIngredients
-        } else {
-            let newRecipe = FoodRecipe(name: name, ingredients: selectedIngredients)
-            modelContext.insert(newRecipe)
-        }
-        
-        do {
-            try modelContext.save()
-            dismiss()
-        } catch {
-            print("Error saving: \(error)")
-        }
-    }
-    
-    private func removeIngredient(_ ingredient: RecipeIngredient) {
-        selectedIngredients.removeAll { $0.id == ingredient.id }
     }
 }
 
