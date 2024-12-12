@@ -25,13 +25,9 @@ struct IngredientsView: View {
                     viewModel.ingredientName = ingredient.name
                     viewModel.showFormAlert = true
                 }) {
-                    HStack {
-                        Text(ingredient.name)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .contentShape(Rectangle())
+                    Text(ingredient.name)
+                        .foregroundColor(Color.primary)
                 }
-                .buttonStyle(PlainButtonStyle())
             }
             .onDelete(perform: viewModel.deleteIngredients)
         }
@@ -53,7 +49,6 @@ struct IngredientsView: View {
     }
 }
 
-//#Preview {
-//    IngredientsView(modelContext: )
-//        .modelContainer(for: RecipeIngredient.self, inMemory: true)
-//}
+#Preview {
+    IngredientsView(modelContext: PreviewModelContainer.instance.modelContext)
+}

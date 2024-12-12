@@ -19,10 +19,13 @@ struct FoodRecipesView: View {
     
     var body: some View {
         VStack {
-            List(viewModel.foodRecipes) { recipe in
-                NavigationLink(destination: FormRecipeView(recipe: recipe)) {
-                    Text(recipe.name)
+            List {
+                ForEach(viewModel.foodRecipes) { recipe in
+                    NavigationLink(destination: FormRecipeView(recipe: recipe)) {
+                        Text(recipe.name)
+                    }
                 }
+                .onDelete(perform: viewModel.deleteRecipes)
             }
         }
         .navigationTitle("Food Recipes")

@@ -27,6 +27,7 @@ final class PreviewModelContainer {
             self.modelContext = container.mainContext
             
             configureFoodRecipePreviewData()
+            configureIngredientsPreviewData()
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
@@ -44,5 +45,16 @@ final class PreviewModelContainer {
         let recipe = FoodRecipe(name: "Spaghetti Bolognese", ingredients: [ingredient1, ingredient2])
         
         modelContext.insert(recipe)
+    }
+    
+    private func configureIngredientsPreviewData() {
+        if let existingRecipes = try? modelContext.fetch(FetchDescriptor<RecipeIngredient>()) {
+            for recipe in existingRecipes {
+                modelContext.delete(recipe)
+            }
+        }
+        
+        let ingredient = RecipeIngredient(name: "Tomato")
+        modelContext.insert(ingredient)
     }
 }

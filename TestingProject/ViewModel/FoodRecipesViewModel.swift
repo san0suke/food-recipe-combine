@@ -31,4 +31,19 @@ class FoodRecipesViewModel {
             foodRecipes = []
         }
     }
+    
+    func deleteRecipes(at indexSet: IndexSet) {
+        withAnimation {
+            for index in indexSet {
+                modelContext.delete(foodRecipes[index])
+            }
+            
+            do {
+                try modelContext.save()
+                fetchFoodRecipes()
+            } catch {
+                print("Error on deleting: \(error.localizedDescription)")
+            }
+        }
+    }
 }
