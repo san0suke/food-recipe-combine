@@ -10,20 +10,18 @@ import SwiftData
 
 struct IngredientsView: View {
     
-    @State private var viewModel: IngredientsViewModel
+    @StateObject private var viewModel: IngredientsViewModel
     
     init(modelContext: ModelContext) {
         let viewModel = IngredientsViewModel(modelContext: modelContext)
-        _viewModel = State(initialValue: viewModel)
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
         List {
             ForEach(viewModel.ingredients) { ingredient in
                 Button(action: {
-                    viewModel.selectedIngredient = ingredient
-                    viewModel.ingredientName = ingredient.name
-                    viewModel.showFormAlert = true
+                    viewModel.configure(with: ingredient)
                 }) {
                     Text(ingredient.name)
                         .foregroundColor(Color.primary)

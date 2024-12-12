@@ -9,14 +9,13 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-@Observable
-class IngredientsViewModel {
+class IngredientsViewModel: ObservableObject {
     
     private var modelContext: ModelContext
     
-    var ingredientName: String = ""
-    var selectedIngredient: RecipeIngredient?
-    var showFormAlert: Bool = false
+    @Published var ingredientName: String = ""
+    @Published var selectedIngredient: RecipeIngredient?
+    @Published var showFormAlert: Bool = false
     
     private(set) var ingredients: [RecipeIngredient] = []
     
@@ -76,6 +75,12 @@ class IngredientsViewModel {
                 print("Error on deleting: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func configure(with ingredient: RecipeIngredient) {
+        selectedIngredient = ingredient
+        ingredientName = ingredient.name
+        showFormAlert = true
     }
     
     private func resetForm() {
