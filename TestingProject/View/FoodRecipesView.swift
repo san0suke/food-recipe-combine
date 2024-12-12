@@ -10,11 +10,11 @@ import SwiftData
 
 struct FoodRecipesView: View {
     
-    @State private var viewModel: FoodRecipesViewModel
+    @StateObject private var viewModel: FoodRecipesViewModel
     
     init(modelContext: ModelContext) {
         let viewModel = FoodRecipesViewModel(modelContext: modelContext)
-        _viewModel = State(wrappedValue: viewModel)
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
@@ -35,9 +35,6 @@ struct FoodRecipesView: View {
                     Label("Add Recipe", systemImage: "plus")
                 }
             }
-        }
-        .onAppear {
-            viewModel.fetchFoodRecipes()
         }
     }
 }

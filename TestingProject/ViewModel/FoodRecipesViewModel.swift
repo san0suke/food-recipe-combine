@@ -8,15 +8,15 @@
 import SwiftUI
 import SwiftData
 
-@Observable
-class FoodRecipesViewModel {
+class FoodRecipesViewModel: ObservableObject {
     
     private var modelContext: ModelContext
     
-    private(set) var foodRecipes: [FoodRecipe] = []
+    @Published private(set) var foodRecipes: [FoodRecipe] = []
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
+        fetchFoodRecipes()
     }
     
     func fetchFoodRecipes() {
@@ -40,7 +40,6 @@ class FoodRecipesViewModel {
             
             do {
                 try modelContext.save()
-                fetchFoodRecipes()
             } catch {
                 print("Error on deleting: \(error.localizedDescription)")
             }
