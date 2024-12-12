@@ -10,12 +10,8 @@ import SwiftData
 
 struct FoodRecipesView: View {
     
-    @StateObject private var viewModel: FoodRecipesViewModel
-    
-    init(modelContext: ModelContext) {
-        let viewModel = FoodRecipesViewModel(modelContext: modelContext)
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @Environment(\.modelContext) private var modelContext
+    @StateObject private var viewModel = FoodRecipesViewModel()
     
     var body: some View {
         VStack {
@@ -36,9 +32,13 @@ struct FoodRecipesView: View {
                 }
             }
         }
+        .onAppear {
+            viewModel.initialize(modelContext: modelContext)
+        }
     }
 }
 
 #Preview {
-    FoodRecipesView(modelContext: PreviewModelContainer.instance.modelContext)
+    FoodRecipesView()
+        .modelContext(PreviewModelContainer.instance.modelContext)
 }

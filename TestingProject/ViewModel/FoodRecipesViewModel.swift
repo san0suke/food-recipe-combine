@@ -10,16 +10,18 @@ import SwiftData
 
 class FoodRecipesViewModel: ObservableObject {
     
-    private var modelContext: ModelContext
+    private var modelContext: ModelContext?
     
     @Published private(set) var foodRecipes: [FoodRecipe] = []
     
-    init(modelContext: ModelContext) {
+    func initialize(modelContext: ModelContext) {
         self.modelContext = modelContext
         fetchFoodRecipes()
     }
     
     func fetchFoodRecipes() {
+        guard let modelContext = modelContext else { return }
+        
         let fetchDescriptor = FetchDescriptor<FoodRecipe>(
             sortBy: [SortDescriptor(\.name)]
         )
@@ -33,6 +35,8 @@ class FoodRecipesViewModel: ObservableObject {
     }
     
     func deleteRecipes(at indexSet: IndexSet) {
+        guard let modelContext = modelContext else { return }
+        
         withAnimation {
             for index in indexSet {
                 modelContext.delete(foodRecipes[index])
