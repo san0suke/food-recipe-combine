@@ -4,26 +4,28 @@
 //
 //  Created by Robson Cesar de Siqueira on 11/12/24.
 //
-
 import SwiftUI
 
 struct IngredientsSelectionView: View {
     
-    let ingredients: [RecipeIngredient]
-    @Binding var selectedIngredients: [RecipeIngredient]
+    @StateObject private var viewModel: IngredientsSelectionViewModel
     @Environment(\.dismiss) private var dismiss
-    
-    @State private var initialIngredients: [RecipeIngredient] = []
-    
+    @Binding var selectedIngredients: [RecipeIngredient]
+
+    init(ingredients: [RecipeIngredient], selectedIngredients: Binding<[RecipeIngredient]>) {
+        _viewModel = StateObject(wrappedValue: IngredientsSelectionViewModel(ingredients: ingredients, selectedIngredients: selectedIngredients.wrappedValue))
+        _selectedIngredients = selectedIngredients
+    }
+
     var body: some View {
         NavigationView {
-            List(ingredients) { ingredient in
+            List(viewModel.ingredients) { ingredient in
                 Button(action: {
-                    addIngredient(ingredient)
+                    viewModel.addIngredient(ingredient)
                 }) {
                     HStack {
                         Text(ingredient.name)
-                        if selectedIngredients.contains(where: { $0.id == ingredient.id }) {
+                        if viewModel.selectedIngredients.contains(where: { $0.id == ingredient.id }) {
                             Spacer()
                             Image(systemName: "checkmark")
                                 .foregroundColor(.blue)
@@ -31,31 +33,23 @@ struct IngredientsSelectionView: View {
                     }
                 }
             }
-            .onAppear {
-                initialIngredients = selectedIngredients
-            }
             .navigationTitle("Select Ingredients")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        selectedIngredients = initialIngredients
+                        viewModel.cancelSelection()
+                        selectedIngredients = viewModel.selectedIngredients
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
+                        viewModel.saveSelection()
+                        selectedIngredients = viewModel.selectedIngredients
                         dismiss()
                     }
                 }
             }
-        }
-    }
-    
-    private func addIngredient(_ ingredient: RecipeIngredient) {
-        if let index = selectedIngredients.firstIndex(where: { $0.id == ingredient.id }) {
-            selectedIngredients.remove(at: index)
-        } else {
-            selectedIngredients.append(ingredient)
         }
     }
 }
